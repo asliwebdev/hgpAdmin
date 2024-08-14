@@ -1,3 +1,11 @@
+import {BarChartComponent} from "@/components/charts/barchart";
+import {PieChartComponent} from "@/components/charts/piechart";
+
 export default function Dashboard() {
-    return <h1 className="text-6xl">My dashboard</h1>
+    return <main className="">
+        <div className="flex gap-10">
+            <BarChartComponent />
+            <PieChartComponent />
+        </div>
+    </main>
 }
