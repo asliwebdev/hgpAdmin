@@ -3,11 +3,9 @@
 import {
     MdDashboard,
   MdMessage,
-  MdOutlineKeyboardArrowDown,
   MdOutlineKeyboardArrowLeft,
-  MdOutlineKeyboardArrowRight, MdOutlineKeyboardArrowUp,
+  MdOutlineKeyboardArrowRight,
   MdPeople,
-  MdShoppingCart,
 } from "react-icons/md";
 import {usePathname} from "next/navigation";
 import {clsx} from "clsx";
@@ -29,11 +27,6 @@ const Sidebar = () => {
       href: "/dashboard/messages",
       label: "Messages",
       icon: <MdMessage />,
-    },
-    {
-      href: "/dashboard/orders",
-      label: "Orders",
-      icon: <MdShoppingCart />,
     },
     {
       href: "/dashboard/users",

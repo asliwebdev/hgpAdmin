@@ -67,11 +67,11 @@ type UserActionProps = {
   enabled: boolean;
 }
   export async function UserAction({userId, enabled}: UserActionProps) {
-    try {
-      const token = cookies().get("hgpAdminToken")?.value;
+    const token = cookies().get("hgpAdminToken")?.value;
       if (!token) {
         redirect('/');
       }
+    try {
       const response = await fetch(`${baseUrl}/api/admin/enable-disable`, {
         method: "POST",
         headers: {
@@ -88,4 +88,40 @@ type UserActionProps = {
       return { errorMessage: "Failed to perform action" };
     }
     revalidatePath("/dashboard/users");
+  }
+
+  export async function addAdmin(formData: FormData) {
+    const validatedFields = LoginSchema.safeParse({
+      login: formData.get('login'),
+      password: formData.get('password'),
+    });
+  
+    if (!validatedFields.success) {
+      return {
+        errorMessage: "Missing fields. Failed to add admin.",
+      };
+    }
+
+    const token = cookies().get("hgpAdminToken")?.value;
+      if (!token) {
+        redirect('/');
+      }
+
+    try {
+      const response = await fetch(`${baseUrl}/api/admin/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(validatedFields.data),
+      });
+  
+      if (!response.ok) {
+        return { errorMessage: "Failed to add admin." };
+      }
+      return {message: "Admin added successfully"}
+    } catch (error) {
+      return { errorMessage: "Failed to add admin." };
+    }
   }

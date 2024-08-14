@@ -22,6 +22,7 @@ import { ScrollArea } from "../ui/scroll-area"
 import { useState } from "react"
 import { Searchbar } from "./searchbar"
 import { Filter } from "./filters"
+import { DialogDemo } from "./dialog"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -32,7 +33,6 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
-  searchedBy = "",
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     []
@@ -54,8 +54,11 @@ export function DataTable<TData, TValue>({
   return (
     <div>
       <div className="flex justify-between mb-4">
-       <Searchbar<TData> table={table} searchedBy={searchedBy}/>
-       <Filter table={table} />
+       <Searchbar<TData> table={table} />
+       <div className="flex items-center gap-x-4">
+        <Filter table={table} />
+        <DialogDemo />
+       </div>
       </div>
     <ScrollArea className="rounded-md border h-[57vh]">
       <Table>
