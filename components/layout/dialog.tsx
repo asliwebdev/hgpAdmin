@@ -19,12 +19,7 @@ import { useFormState } from "react-dom"
 import { addAdmin } from "@/lib/actions"
 import { toast } from "sonner"
 
-const initialState = {
-  errorMessage: "",
-  message: "" 
-}
-
-export function DialogDemo() {
+export function AddAdmin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);

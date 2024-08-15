@@ -1,11 +1,21 @@
-import {BarChartComponent} from "@/components/charts/barchart";
-import {PieChartComponent} from "@/components/charts/piechart";
+import {DataTable} from "@/components/layout/data-table";
+import {getOrders} from "@/lib/data";
+import {orderColumns} from "./order-columns";
+import Charts from "@/app/dashboard/charts";
 
-export default function Dashboard() {
-    return <main className="">
-        <div className="flex gap-10">
-            <BarChartComponent />
-            <PieChartComponent />
-        </div>
+const orderFields = [
+    {key: "id", label: "ID"},
+    {key: "userId", label: "User ID"},
+    {key: "orderDate", label: "Order Date"},
+    {key: "orderAddress", label: "Address"},
+    {key: "delivered", label: "Delivered"},
+]
+
+export default async function Dashboard() {
+    const data = await getOrders()
+    return <main>
+        <Charts />
+        <h2 className="mb-10 font-bold text-4xl">Orders</h2>
+        <DataTable columns={orderColumns} data={data} fields={orderFields} />
     </main>
 }

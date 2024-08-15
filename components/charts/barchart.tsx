@@ -1,6 +1,5 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
 
 import {
@@ -12,32 +11,35 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import {chartData} from "@/lib/utils";
+import {chartConfig,} from "@/lib/utils";
+import {OrderStatistic} from "@/types";
+import {YearSelector} from "@/components/ui/year-selector";
 
-const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "#2662da",
-  },
-} satisfies ChartConfig
+interface Order {
+    orderStatistics: OrderStatistic[];
+    year: number;
+    setYear: (year: number) => void;
+}
 
-export function BarChartComponent() {
+export function BarChartComponent({ orderStatistics, year, setYear }: Order) {
   return (
     <Card className="w-[50%]">
-      <CardHeader>
-        <CardTitle> Bar Chart - Label </CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+      <CardHeader className="flex flex-row justify-between items-center">
+          <div>
+              <CardTitle> Statistics for selling devices </CardTitle>
+              <CardDescription>January - December {year}</CardDescription>
+          </div>
+          <YearSelector year={year} setYear={setYear} />
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[400px] w-full">
           <BarChart
             accessibilityLayer
-            data={chartData}
+            data={orderStatistics}
             margin={{
               top: 20,
             }}
@@ -54,7 +56,7 @@ export function BarChartComponent() {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8}>
+            <Bar dataKey="number" radius={8}>
               <LabelList
                 position="top"
                 offset={12}
@@ -67,10 +69,7 @@ export function BarChartComponent() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing total orders for the 12 months
         </div>
       </CardFooter>
     </Card>

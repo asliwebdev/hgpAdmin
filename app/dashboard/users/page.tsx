@@ -3,11 +3,23 @@ import { DataTable } from "@/components/layout/data-table"
 import { FaUsers, FaUserCheck } from "react-icons/fa";
 import { FaUserSlash } from "react-icons/fa6";
 import { userColumns } from './users-columns';
-import { getStatistics, getUsers } from "@/lib/data";
+import { getUserStatistics, getUsers } from "@/lib/data";
+
+const userFields = [
+  { key: "email", label: "Email" },
+  { key: "enabled", label: "Enabled" },
+  { key: "phone", label: "Phone Number" },
+  { key: "address", label: "Address" },
+  { key: "firstname", label: "First Name" },
+  { key: "lastname", label: "Last Name" },
+  { key: "deviceId", label: "Device ID" },
+  { key: "gender", label: "Gender" },
+  { key: "action", label: "Action" },
+];
 
 export default async function Users() {
   const data = await getUsers()
-  const statistics = await getStatistics()
+  const statistics = await getUserStatistics()
 
   const cards = [
     {
@@ -44,7 +56,7 @@ export default async function Users() {
         </Card>
       ))}
       </div>
-      <DataTable columns={userColumns} data={data} searchedBy="lastname" />
+      <DataTable columns={userColumns} data={data} hasAddButton={true} fields={userFields} />
     </div>
   )
 }

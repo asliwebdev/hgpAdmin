@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { TrendingUp } from "lucide-react"
 import { Label, Pie, PieChart } from "recharts"
 
 import {
@@ -13,51 +12,28 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import {
-    ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
-import {chartData} from "@/lib/utils";
+import {chartConfig} from "@/lib/utils";
+import {OrderStatistic} from "@/types";
 
-const chartConfig = {
-    visitors: {
-        label: "Visitors",
-    },
-    chrome: {
-        label: "Chrome",
-        color: "hsl(var(--chart-1))",
-    },
-    safari: {
-        label: "Safari",
-        color: "hsl(var(--chart-2))",
-    },
-    firefox: {
-        label: "Firefox",
-        color: "hsl(var(--chart-3))",
-    },
-    edge: {
-        label: "Edge",
-        color: "hsl(var(--chart-4))",
-    },
-    other: {
-        label: "Other",
-        color: "hsl(var(--chart-5))",
-    },
-} satisfies ChartConfig
+interface Order {
+    orderStatistics: OrderStatistic[];
+    year: number;
+}
 
-export function PieChartComponent() {
-    const totalVisitors = React.useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.desktop, 0)
-    }, [])
-
-    console.log(totalVisitors)
+export function PieChartComponent({orderStatistics, year}: Order) {
+    const totalOrders = React.useMemo(() => {
+        return orderStatistics.reduce((acc, curr) => acc + curr.number, 0)
+    }, [orderStatistics])
 
     return (
         <Card className="flex flex-col w-full">
             <CardHeader className="items-center pb-0">
-                <CardTitle>Pie Chart - Donut with Text</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
+                <CardTitle>Statistics for selling devices</CardTitle>
+                <CardDescription>January - December {year}</CardDescription>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
                 <ChartContainer
@@ -70,8 +46,8 @@ export function PieChartComponent() {
                             content={<ChartTooltipContent hideLabel />}
                         />
                         <Pie
-                            data={chartData}
-                            dataKey="desktop"
+                            data={orderStatistics}
+                            dataKey="number"
                             nameKey="month"
                             innerRadius={80}
                             strokeWidth={3}
@@ -91,14 +67,14 @@ export function PieChartComponent() {
                                                     y={viewBox.cy}
                                                     className="fill-foreground text-3xl font-bold"
                                                 >
-                                                    {totalVisitors.toLocaleString()}
+                                                    {totalOrders.toLocaleString()}
                                                 </tspan>
                                                 <tspan
                                                     x={viewBox.cx}
                                                     y={(viewBox.cy || 0) + 24}
                                                     className="fill-muted-foreground"
                                                 >
-                                                    Visitors
+                                                    Orders
                                                 </tspan>
                                             </text>
                                         )
@@ -111,10 +87,7 @@ export function PieChartComponent() {
             </CardContent>
             <CardFooter className="flex-col gap-2 text-sm">
                 <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-                </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total visitors for the last 6 months
+                    Showing total orders for the 12 months
                 </div>
             </CardFooter>
         </Card>

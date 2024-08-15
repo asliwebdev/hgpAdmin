@@ -14,30 +14,15 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-
-interface Field {
-  key: string;
-  label: string;
-}
-
-const fields: Field[] = [
-  { key: "email", label: "Email" },
-  { key: "enabled", label: "Enabled" },
-  { key: "phone", label: "Phone Number" },
-  { key: "address", label: "Address" },
-  { key: "firstname", label: "First Name" },
-  { key: "lastname", label: "Last Name" },
-  { key: "deviceId", label: "Device ID" },
-  { key: "gender", label: "Gender" },
-  { key: "action", label: "Action" },
-];
+import {Field} from "@/types";
 
 interface SearchBarProps<D> {
   table: Table<D>;
+  fields: Field[];
 }
 
 export function Searchbar<D>(props: SearchBarProps<D>) {
-  const [searchedBy, setSearchedBy] = useState("email");
+  const [searchedBy, setSearchedBy] = useState(props.fields[0].key);
 
   return (
     <div className={"relative"}>
@@ -54,12 +39,12 @@ export function Searchbar<D>(props: SearchBarProps<D>) {
            <LuChevronDown className="cursor-pointer absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-dark-secondary" />
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="top" align="start">
+        <DropdownMenuContent align="start">
          <DropdownMenuLabel>Choose what to search</DropdownMenuLabel>
          <DropdownMenuSeparator />
          <DropdownMenuGroup>
           {
-            fields.map(field => (
+            props.fields.map(field => (
               <DropdownMenuItem key={field.key} onClick={() => setSearchedBy(field.key)} className="flex items-center justify-between">{field.label} {searchedBy === field.key && <MdOutlineCheck />}</DropdownMenuItem>
             ))
           }

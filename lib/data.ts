@@ -1,3 +1,5 @@
+"use server"
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { baseUrl } from "./utils";
@@ -27,7 +29,7 @@ export async function getUsers() {
     }
   }
 
-  export async function getStatistics() {
+  export async function getUserStatistics() {
     const token = cookies().get("hgpAdminToken")?.value;
     if (!token) {
       redirect('/');
@@ -51,3 +53,53 @@ export async function getUsers() {
         return { errorMessage: "Failed to fetch statistics" };
       }
   }
+
+  export async function getOrders() {
+    const token = cookies().get("hgpAdminToken")?.value;
+    if (!token) {
+      redirect('/');
+    }
+      try {
+        const response = await fetch(`${baseUrl}/api/order/list`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          next: { tags: ["orders"] },
+        });
+
+        if (!response.ok) {
+          return { errorMessage: "Failed to fetch orders" };
+        }
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        return { errorMessage: "Failed to fetch orders" };
+      }
+  }
+
+  export async function getOrderStatistics(year: number) {
+  const token = cookies().get("hgpAdminToken")?.value;
+    if (!token) {
+      redirect('/');
+    }
+      try {
+        const response = await fetch(`${baseUrl}/api/order-statis?year=${year}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          next: { tags: ["orderStatistics"] },
+        });
+
+        if (!response.ok) {
+          return { errorMessage: "Failed to fetch order statistics" };
+        }
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        return { errorMessage: "Failed to fetch order statistics" };
+      }
+}
