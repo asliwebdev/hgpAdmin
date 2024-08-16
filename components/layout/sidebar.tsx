@@ -12,8 +12,13 @@ import {clsx} from "clsx";
 import Link from "next/link";
 import {motion} from "framer-motion";
 import {useState} from "react";
+import {Badge} from "@/components/ui/badge";
 
-const Sidebar = () => {
+type SidebarProps = {
+    numOfMessages: number;
+}
+
+const Sidebar = ({numOfMessages}: SidebarProps) => {
   const pathname = usePathname();
   const [open, setOpen] = useState(true)
 
@@ -80,7 +85,7 @@ const Sidebar = () => {
                     opacity: open ? 1 : 0,
                   }
                 }
-              >
+              > {(link.label === "Messages" && numOfMessages > 0) && <Badge className={"rounded-md"} variant={"destructive"}>{numOfMessages}</Badge>}
               </motion.div>
             </Link>
           ))}

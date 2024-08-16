@@ -6,6 +6,7 @@ import { userColumns } from './users-columns';
 import { getUserStatistics, getUsers } from "@/lib/data";
 
 const userFields = [
+  { key: "id", label: "ID" },
   { key: "email", label: "Email" },
   { key: "enabled", label: "Enabled" },
   { key: "phone", label: "Phone Number" },
@@ -40,7 +41,7 @@ export default async function Users() {
   ];
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 max-w-[1500px]">
       <div className="flex justify-between w-full gap-10 mb-10">
       {cards.map((card) => (
         <Card key={card.title} className="flex-1">

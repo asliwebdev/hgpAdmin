@@ -29,3 +29,15 @@ export type User = {
         number: number;
         income: number;
     }
+
+    export type Message = {
+        id: number,
+        userId: number,
+        firstName: string,
+        lastName: string,
+        title: string,
+        email: string,
+        message: string,
+        sentAt: string,
+        read: boolean
+    }

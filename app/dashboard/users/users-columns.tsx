@@ -1,10 +1,18 @@
 "use client"
 
 import { User } from "@/types";
-import { UserAction } from "@/lib/actions";
+import { userAction } from "@/lib/actions";
 import { ColumnDef } from "@tanstack/react-table"
+import {toast} from "sonner";
 
 export const userColumns: ColumnDef<User>[] = [
+  {
+    accessorKey: "id",
+    header: () => <div className="text-left">ID</div>,
+    cell: ({ row }) => (
+        <div className="text-left font-medium">{row.getValue("id")}</div>
+    ),
+  },
   {
     accessorKey: "email",
     header: () => <div className="text-left">Email</div>,
@@ -78,19 +86,26 @@ export const userColumns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const enabled = row.getValue("enabled") as boolean;
       const userId = row.original.id;
-      const handleActionClick = () => {
-        UserAction({ userId, enabled: !enabled });
+      const handleActionClick = async () => {
+        const response = await userAction({ userId, enabled: !enabled });
+        if (response?.errorMessage) {
+          toast.error(response.errorMessage);
+          console.error(response.errorMessage);
+        }
       };
 
       return (
-        <button
-        onClick={handleActionClick}
-          className={`text-white px-2 py-1 rounded ${
-            enabled ? "bg-red-500" : "bg-green-500"
-          }`}
-        >
-          {enabled ? "disable" : "enable"}
-        </button>
+          <div className="w-full text-center">
+            <button
+                onClick={handleActionClick}
+                className={`text-white px-4 py-1 rounded font-semibold ${
+                    enabled ? "bg-red-500" : "bg-green-500"
+                }`}
+            >
+              {enabled ? "disable" : "enable"}
+            </button>
+          </div>
+
       );
     },
   },

@@ -1,8 +1,20 @@
 "use client"
 
 import { Order } from "@/types";
-import { UserAction } from "@/lib/actions";
+import { makeDelivered } from "@/lib/actions";
 import { ColumnDef } from "@tanstack/react-table"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {toast} from "sonner";
 
 export const orderColumns: ColumnDef<Order>[] = [
     {
@@ -63,27 +75,53 @@ export const orderColumns: ColumnDef<Order>[] = [
             );
         },
     },
-    // {
-    //     accessorKey: "action",
-    //     header: () => <div className="text-center">Action</div>,
-    //     cell: ({row}) => {
-    //         const enabled = row.getValue("enabled") as boolean;
-    //         const userId = row.original.id;
-    //         const handleActionClick = () => {
-    //             UserAction({ userId, enabled: !enabled });
-    //         };
-    //
-    //         return (
-    //             <button
-    //                 onClick={handleActionClick}
-    //                 className={`text-white px-2 py-1 rounded ${
-    //                     enabled ? "bg-red-500" : "bg-green-500"
-    //                 }`}
-    //             >
-    //                 {enabled ? "disable" : "enable"}
-    //             </button>
-    //         );
-    //     },
-    // },
+    {
+        accessorKey: "action",
+        header: () => <div className="text-center">Action</div>,
+        cell: ({row}) => {
+            const delivered = row.getValue("delivered") as boolean;
+            const userId = row.getValue("userId") as number;
+            const address = row.getValue("orderAddress") as string;
+            const handleActionClick = async () => {
+                try {
+                    const response = await makeDelivered(Number(userId));
+                    if (response?.errorMessage) {
+                        toast.error(response.errorMessage);
+                        console.error(response.errorMessage);
+                    }
+                } catch (error) {
+                    console.error("An error occurred while making the delivery:", error);
+                }
+            };
+
+            return (
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <div className="w-full text-center">
+                            <button
+                                className={`text-white px-4 py-1 font-semibold rounded ${
+                                    delivered ? "hidden" : "bg-green-500 hover:bg-green-600 transition-colors duration-300"
+                                }`}
+                            >
+                                {!delivered && "delivered"}
+                            </button>
+                        </div>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently make this order delivered to user with address: <span className="text-black font-bold ml-2 text-base">{address}</span>.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter className="flex gap-x-2">
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleActionClick}>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            );
+        },
+    },
 ];
 

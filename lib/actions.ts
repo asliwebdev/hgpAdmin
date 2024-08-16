@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { LoginSchema } from "./validations";
 import { baseUrl } from "./utils";
-import { revalidatePath } from "next/cache";
+import {revalidatePath, revalidateTag} from "next/cache";
 
 export async function login(prevState: {errorMessage: string} | undefined, formData: FormData) {
   const validatedFields = LoginSchema.safeParse({
@@ -66,7 +66,7 @@ type UserActionProps = {
   userId: number;
   enabled: boolean;
 }
-  export async function UserAction({userId, enabled}: UserActionProps) {
+  export async function userAction({userId, enabled}: UserActionProps) {
     const token = cookies().get("hgpAdminToken")?.value;
       if (!token) {
         redirect('/');
@@ -124,4 +124,51 @@ type UserActionProps = {
     } catch (error) {
       return { errorMessage: "Failed to add admin." };
     }
+  }
+
+  export async function makeDelivered(userId: number) {
+    const token = cookies().get("hgpAdminToken")?.value;
+      if (!token) {
+        redirect('/');
+      }
+    try {
+      const response = await fetch(`${baseUrl}/api/delivered?userId=${userId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        return { errorMessage: "Failed to perform action" };
+      }
+    } catch (error) {
+      return { errorMessage: "Failed to perform action" };
+    }
+    revalidateTag("orders");
+  }
+
+  export async function makeMessageRead(userId: number, id: number) {
+    const token = cookies().get("hgpAdminToken")?.value;
+      if (!token) {
+        redirect('/');
+      }
+    try {
+      const response = await fetch(`${baseUrl}/api/contact/read`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({userId, messageId: id}),
+      });
+
+      if (!response.ok) {
+        return { errorMessage: "Failed to make message read" };
+      }
+    } catch (error) {
+      return { errorMessage: "Failed to make message read" };
+    }
+    revalidatePath("/dashboard/messages");
   }

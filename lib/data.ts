@@ -3,6 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { baseUrl } from "./utils";
+import { unstable_noStore as noStore } from 'next/cache';
 
 export async function getUsers() {
   const token = cookies().get("hgpAdminToken")?.value;
@@ -103,3 +104,53 @@ export async function getUsers() {
         return { errorMessage: "Failed to fetch order statistics" };
       }
 }
+
+  export async function getMessages() {
+    noStore();
+    const token = cookies().get("hgpAdminToken")?.value;
+    if (!token) {
+      redirect('/');
+    }
+      try {
+        const response = await fetch(`${baseUrl}/api/contact/get/messages`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          next: { tags: ["messages"] },
+        });
+
+        if (!response.ok) {
+          return { errorMessage: "Failed to fetch messages" };
+        }
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        return { errorMessage: "Failed to fetch messages" };
+      }
+  }
+
+  export async function getMessagesCount() {
+    noStore();
+    const token = cookies().get("hgpAdminToken")?.value;
+    if (!token) {
+      redirect('/');
+    }
+      try {
+        const response = await fetch(`${baseUrl}/api/contact/count`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          return { errorMessage: "Failed to fetch messages count" };
+        }
+        const responseData = await response.json();
+        return responseData;
+      } catch (error) {
+        return { errorMessage: "Failed to fetch messages count" };
+      }
+  }
